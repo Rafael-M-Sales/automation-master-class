@@ -9,7 +9,10 @@ class APIService {
     this.api = axios.create({
       baseURL: 'https://restful-booker.herokuapp.com',
       timeout: 10000,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json' // OBRIGATÓRIO para evitar o erro 418 nessa API
+      }
     });
 
     this.mock_service = axios.create({
