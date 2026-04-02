@@ -12,6 +12,11 @@ services:
       - DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
+    healthcheck: # Garante que os outros serviços esperem a LocalStack estar pronta
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - "./infra/localstack:/var/lib/localstack"
 
@@ -35,10 +40,11 @@ services:
     ports:
       - "3000:3000"           # Nosso microserviço rodará na porta 3000
     environment:
-      - SQS_ENDPOINT=http://localstack:4566
+      - SQS_ENDPOINT=http://localstack_main:4566 # Usamos o nome do container para garantir
       - QUEUE_NAME=orders-queue
       - AWS_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
     depends_on:
-      - localstack
+      localstack:
+        condition: service_healthy # Só liga o microserviço quando a LocalStack estiver saudável

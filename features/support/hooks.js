@@ -1,5 +1,8 @@
-const { Before, After, BeforeAll, AfterAll } = require('@cucumber/cucumber');
+const { Before, After, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber');
 const { chromium } = require('playwright');
+
+// Definimos o tempo limite global para 30 segundos (evita o erro de timeout de 5s)
+setDefaultTimeout(30000);
 
 // Variáveis globais para o navegador
 let browser;
