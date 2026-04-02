@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # LocalStack: Simula a AWS (SQS e DLQ) no seu computador
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack_main
+    ports:
+      - "4566:4566"            # Porta padrão da LocalStack
+    environment:
+      - SERVICES=sqs           # Habilita apenas o serviço de filas (SQS)
+      - DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - "./infra/localstack:/var/lib/localstack"
+
+  # Jenkins: Simula o ambiente de Integração Contínua (CI/CD)
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins_main
+    ports:
+      - "8080:8080"           # Interface do Jenkins
+      - "50000:50000"         # Comunicação de agentes
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false # Pula o wizard inicial para facilitar
+    volumes:
+      - "./.jenkins:/var/jenkins_home"
+
+  # Mock-Order-Service: Nosso microserviço de mentirinha que envia ordens para o SQS
+  order-service:
+    build: 
+      context: ./mocks/order-service
+    container_name: order_service_mock
+    ports:
+      - "3000:3000"           # Nosso microserviço rodará na porta 3000
+    environment:
+      - SQS_ENDPOINT=http://localstack:4566
+      - QUEUE_NAME=orders-queue
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    depends_on:
+      - localstack

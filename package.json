@@ -1,0 +1,26 @@
+{
+  "name": "automation-master-class",
+  "version": "1.0.0",
+  "description": "Projeto Master Class de Automação: Playwright + BDD + SQS + Jenkins",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js features/**/*.feature",
+    "test:api": "playwright test tests/api",
+    "infra:up": "docker-compose up -d",
+    "infra:down": "docker-compose down",
+    "infra:logs": "docker-compose logs -f",
+    "postinstall": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.0.0",
+    "@cucumber/cucumber": "^10.0.0",
+    "axios": "^1.6.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.3.1",
+    "playwright": "^1.40.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
