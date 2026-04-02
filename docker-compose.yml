@@ -20,7 +20,7 @@ services:
     image: jenkins/jenkins:lts
     container_name: jenkins_main
     ports:
-      - "8080:8080"           # Interface do Jenkins
+      - "8081:8080"           # Interface do Jenkins (mudamos para 8081 para evitar conflito)
       - "50000:50000"         # Comunicação de agentes
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false # Pula o wizard inicial para facilitar
