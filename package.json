@@ -6,7 +6,9 @@
   "scripts": {
     "test": "cucumber-js features/**/*.feature",
     "test:api": "playwright test tests/api",
-    "infra:up": "docker-compose up -d",
+    "test:headed": "cross-env HEADLESS=false npm test",
+    "test:ui": "playwright test tests/ui",
+    "infra:up": "node scripts/ensure-docker.js && docker-compose up -d",
     "infra:down": "docker-compose down",
     "infra:logs": "docker-compose logs -f",
     "watch:git": "node scripts/git-sync.js",

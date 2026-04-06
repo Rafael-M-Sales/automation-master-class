@@ -35,7 +35,8 @@ app.post('/order', async (req, res) => {
   try {
     // 2. Enviamos para a fila (SQS)
     const command = new SendMessageCommand({
-      QueueUrl: `${process.env.SQS_ENDPOINT}/${process.env.QUEUE_NAME || 'orders-queue'}`,
+      // No LocalStack, a URL da fila segue o padrão: endpoint/account_id/queue_name
+      QueueUrl: `${process.env.SQS_ENDPOINT}/000000000000/${process.env.QUEUE_NAME || 'orders-queue'}`,
       MessageBody: messageBody,
     });
 

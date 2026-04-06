@@ -1,5 +1,7 @@
 const { Before, After, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber');
 const { chromium } = require('playwright');
+const fs = require('fs');
+const path = require('path');
 
 // Definimos o tempo limite global para 30 segundos (evita o erro de timeout de 5s)
 setDefaultTimeout(30000);
@@ -13,8 +15,9 @@ let browser;
 BeforeAll(async function () {
   console.log('--- INICIANDO SUÍTE DE TESTES ---');
   browser = await chromium.launch({ 
-    headless: true, // Muda para false se quiser ver o navegador abrindo
-    slowMo: 100 // Atraso de 0.1s em cada ação para facilitar a visão (opcional)
+    // Se a variável HEADLESS for 'false', o navegador abre na tela
+    headless: process.env.HEADLESS !== 'false', 
+    slowMo: process.env.HEADLESS === 'false' ? 1000 : 100 // Fica mais lento se estivermos assistindo
   });
 });
 
@@ -34,11 +37,26 @@ Before(async function () {
 After(async function (scenario) {
   console.log('<<< Finalizando cenário.');
   
-  // Se o teste falhar, podemos tirar um screenshot automático aqui! (Opcional)
-  if (scenario.result.status === 'FAILED') {
-    const screenPath = `./reports/fail-${scenario.pickle.name.replace(/ /g, '_')}.png`;
-    await this.page.screenshot({ path: screenPath });
-    console.warn(`[DEBUG] Teste falhou! Screenshot salva em: ${screenPath}`);
+  // 1. Definimos a estrutura de pastas por data e título
+  const dataHoje = new Date().toISOString().split('T')[0]; // Formato AAAA-MM-DD
+  const nomeCenario = scenario.pickle.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  const baseDir = path.join(process.cwd(), 'reports', 'RESULTADOS', dataHoje, nomeCenario);
+
+  // Criamos as pastas se não existirem
+  if (!fs.existsSync(baseDir)) {
+    fs.mkdirSync(baseDir, { recursive: true });
+  }
+
+  // 2. Tiramos um screenshot final (Sucesso ou Falha) para registro
+  const status = scenario.result.status.toLowerCase();
+  const screenPath = path.join(baseDir, `resultado-${status}.png`);
+  
+  await this.page.screenshot({ path: screenPath, fullPage: true });
+  console.log(`[RELATÓRIO] Evidência salva em: ${screenPath}`);
+
+  // Se o teste falhar, logamos o aviso
+  if (status === 'failed') {
+    console.warn(`[ALERTA] O cenário "${scenario.pickle.name}" falhou.`);
   }
 
   // Fechar a aba e o contexto após o teste

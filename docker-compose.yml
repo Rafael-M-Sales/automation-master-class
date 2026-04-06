@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # LocalStack: Simula a AWS (SQS e DLQ) no seu computador
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:3.3.0 # Versão estável que não pede token
     container_name: localstack_main
     ports:
       - "4566:4566"            # Porta padrão da LocalStack
@@ -12,13 +12,9 @@ services:
       - DEFAULT_REGION=us-east-1
       - AWS_ACCESS_KEY_ID=test
       - AWS_SECRET_ACCESS_KEY=test
-    healthcheck: # Garante que os outros serviços esperem a LocalStack estar pronta
-      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     volumes:
       - "./infra/localstack:/var/lib/localstack"
+      - "./infra/setup-sqs.sh:/etc/localstack/init/ready.d/setup-sqs.sh" # Scripts de inicialização
 
   # Jenkins: Simula o ambiente de Integração Contínua (CI/CD)
   jenkins:

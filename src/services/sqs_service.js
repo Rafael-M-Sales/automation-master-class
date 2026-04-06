@@ -10,7 +10,7 @@ class SQSService {
       region: 'us-east-1',
       endpoint: 'http://localhost:4566', // LocalStack
       credentials: {
-        accessKey_Id: 'test',
+        accessKeyId: 'test',
         secretAccessKey: 'test',
       },
     });

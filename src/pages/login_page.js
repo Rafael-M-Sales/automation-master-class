@@ -2,6 +2,8 @@
  * Arquivo: login_page.js
  * Padrão: Page Object Model (POM) - Separação da lógica de visualização da lógica do teste
  */
+const { highlightElement } = require('../support/visual_helper');
+
 class LoginPage {
   constructor(page) {
     this.page = page;
@@ -27,9 +29,19 @@ class LoginPage {
    */
   async login(user, pass) {
     console.log(`[UI] Realizando login com o usuário: ${user}`);
-    await this.page.fill(this.usernameInput, user);
-    await this.page.fill(this.passwordInput, pass);
-    await this.page.click(this.loginButton);
+    
+    const userField = this.page.locator(this.usernameInput);
+    const passField = this.page.locator(this.passwordInput);
+    const btn = this.page.locator(this.loginButton);
+
+    await highlightElement(userField);
+    await userField.fill(user);
+
+    await highlightElement(passField);
+    await passField.fill(pass);
+
+    await highlightElement(btn);
+    await btn.click();
   }
 
   /**

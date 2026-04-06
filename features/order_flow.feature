@@ -16,6 +16,12 @@ Funcionalidade: Fluxo de Pedido e Reserva de Hotel
 
     Quando eu realizar o login no portal "SauceDemo" com as mesmas credenciais
     Então eu devo visualizar a página de produtos com sucesso
+    E a vitrine deve exibir 6 produtos com preços e nomes válidos
+    Quando eu adicionar todos os produtos da vitrine ao carrinho
+    Então o contador do carrinho deve exibir "6"
+    Quando eu realizar o checkout do pedido com meus dados
+    E o valor subtotal do checkout deve corresponder à soma dos preços dos produtos
+    Então eu devo visualizar a mensagem de confirmação "Thank you for your order!"
 
     Quando eu enviar um sinal de novo pedido para o microserviço de ordens com o ID "ORD-123"
     Então eu devo validar que a mensagem do pedido "ORD-123" chegou na fila SQS "orders-queue"
