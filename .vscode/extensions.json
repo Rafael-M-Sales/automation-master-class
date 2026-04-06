@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "ms-playwright.playwright",
+    "alexkrechik.cucumberautocomplete",
+    "eamodio.gitlens",
+    "usernamehw.errorlens"
+  ]
+}
